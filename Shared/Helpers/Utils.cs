@@ -111,6 +111,19 @@ namespace ClaudiaIDE.Helpers
                 //32bit assumption
                 if (original.Format.BitsPerPixel != 32) return original;
 
+                // There are various 32bit pixel formats. Some handle transparency differently.
+                // To ensure consistent behavior, the source image is converted to Pbgra32 format.
+                // Also, the calculation for the new transparency pixels already assumes Pbgra32 format,
+                // so converting to Pbgra32 allows the code to work correctly with other 32bit formats.
+                if (original.Format != PixelFormats.Pbgra32)
+                {
+                    original = new FormatConvertedBitmap(
+                        original,
+                        PixelFormats.Pbgra32,
+                        null,
+                        0);
+                }
+
                 //limit softedge range by half image size
                 softedgex = Math.Min(softedgex, (int)(original.Width / 2));
                 softedgey = Math.Min(softedgey, (int)(original.Height / 2));
